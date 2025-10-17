@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DeepSeek Chat 面板</title>
+    <link rel="stylesheet" href="styles/panel.css" />
+  </head>
+  <body>
+    <div class="panel">
+      <div class="ghds-header">
+        <div class="ghds-header-title">DeepSeek Chat</div>
+        <button id="clearBtn" class="clear-btn" title="清除对话历史">🗑️</button>
+      </div>
+      <div id="chat" class="ghds-chat"></div>
+      <div class="ghds-input">
+        <form id="form">
+          <textarea id="prompt" placeholder="输入你的问题，回车发送…"></textarea>
+          <button type="submit">发送</button>
+        </form>
+      </div>
+    </div>
+    <script src="scripts/panel.js"></script>
+  </body>
+  </html>

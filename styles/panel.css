@@ -1,0 +1,236 @@
+/* GitHub 风格侧边栏面板样式 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #24292f; }
+
+/* 面板容器 */
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ffffff;
+}
+
+/* 顶部标题栏 */
+.ghds-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #d0d7de;
+  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04);
+}
+
+.ghds-header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #24292f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ghds-header-title::before {
+  content: "🤖";
+  font-size: 20px;
+}
+
+/* 清除按钮 */
+.clear-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  color: #57606a;
+}
+
+.clear-btn:hover {
+  opacity: 1;
+  background: #f6f8fa;
+  color: #24292f;
+}
+
+.clear-btn:active {
+  background: #eaeef2;
+}
+
+/* 聊天区域 */
+.ghds-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f6f8fa;
+}
+
+.ghds-chat::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ghds-chat::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ghds-chat::-webkit-scrollbar-thumb {
+  background: #d0d7de;
+  border-radius: 4px;
+}
+
+.ghds-chat::-webkit-scrollbar-thumb:hover {
+  background: #afb8c1;
+}
+
+/* 消息容器 */
+.ghds-message {
+  margin-bottom: 16px;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ghds-message .role {
+  font-size: 12px;
+  font-weight: 600;
+  color: #57606a;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 消息气泡 */
+.ghds-message .bubble {
+  padding: 12px 16px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #24292f;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: 0 1px 2px rgba(27, 31, 35, 0.04);
+  transition: all 0.2s ease;
+}
+
+/* 用户消息 */
+.ghds-message.user .bubble {
+  background: #ffffff;
+  border-color: #d0d7de;
+}
+
+/* AI 助手消息 */
+.ghds-message.assistant .bubble {
+  background: #ddf4ff;
+  border-color: #54aeff;
+}
+
+/* 流式输出状态 */
+.ghds-message .bubble.streaming {
+  position: relative;
+  border-color: #54aeff;
+  box-shadow: 0 0 0 2px rgba(84, 174, 255, 0.1);
+}
+
+/* 错误消息 */
+.ghds-message .bubble.error {
+  background: #ffebe9;
+  border-color: #ff8182;
+  color: #d1242f;
+}
+
+/* 光标动画 */
+.ghds-message .bubble .cursor {
+  color: #0969da;
+  font-weight: bold;
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+  display: inline-block;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* 输入区域 */
+.ghds-input {
+  border-top: 1px solid #d0d7de;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: 0 -1px 0 rgba(27, 31, 35, 0.04);
+}
+
+.ghds-input form {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.ghds-input textarea {
+  flex: 1;
+  resize: none;
+  min-height: 40px;
+  max-height: 160px;
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #f6f8fa;
+  color: #24292f;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.ghds-input textarea:focus {
+  outline: none;
+  border-color: #0969da;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.ghds-input textarea::placeholder {
+  color: #57606a;
+}
+
+.ghds-input button {
+  padding: 8px 16px;
+  background: linear-gradient(180deg, #2da44e 0%, #298e46 100%);
+  color: #ffffff;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  height: 40px;
+}
+
+.ghds-input button:hover {
+  background: linear-gradient(180deg, #2c974b 0%, #279f44 100%);
+  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.ghds-input button:active {
+  background: #298e46;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.ghds-input button:disabled {
+  background: #94d3a2;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
