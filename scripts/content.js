@@ -1,28 +1,109 @@
-// 内容脚本：在 GitHub issue 页面添加右下角浮点按钮，打开侧边栏聊天
+// 内容脚本：在 GitHub issue 和 PR Files 页面添加 Chat 按钮，打开侧边栏聊天
 
 (() => {
   console.log('[DeepSeek] 内容脚本初始化')
 
   let uiMounted = false
-  let floatingBtn = null
 
-  // 判断是否为 issue 页面（列表或详情）
+  // 判断是否为 GitHub 首页
+  function isGitHubHomePage() {
+    const p = location.pathname
+    return p === '/' || p === ''
+  }
+
+  // 判断是否为 issue 页面（列表或详情）或 PR Files 页面
   function isIssuePage() {
     const p = location.pathname
-    return p.includes('/issues')
+    return p.includes('/issues') || (p.includes('/pull/') && p.includes('/files'))
   }
 
-  // 创建浮动按钮
-  function createFloatingButton() {
+  // 创建内联 Chat 按钮（用于 issue action bar）
+  function createInlineChatButton() {
     const btn = document.createElement('button')
-    btn.className = 'ghds-floating-btn'
-    btn.title = 'DeepSeek Chat'
-    btn.textContent = 'AI'
-    // 直接打开浏览器原生侧边栏
+    btn.className = 'ghds-inline-chat-btn btn-sm btn'
+    btn.type = 'button'
+    btn.title = 'Open DeepSeek Chat in Sidebar'
+    btn.textContent = 'Codeagent Chat'
     btn.addEventListener('click', openBrowserSidePanel)
-    document.body.appendChild(btn)
     return btn
   }
+
+  // 创建 Files 页面专用的 Chat 按钮（更小的尺寸）
+  function createFilesPageChatButton() {
+    const btn = document.createElement('button')
+    btn.className = 'ghds-inline-chat-btn-files'
+    btn.type = 'button'
+    btn.title = 'Open DeepSeek Chat in Sidebar'
+    btn.textContent = 'Codeagent Chat'
+    btn.addEventListener('click', openBrowserSidePanel)
+    return btn
+  }
+
+  // 在 issue 页面的 action bar 中插入 Chat 按钮
+  function insertIssueActionButton() {
+    const actionBar = document.querySelector('[data-component="PH_Actions"]')
+    if (!actionBar) return false
+
+    // 检查是否已插入
+    if (actionBar.querySelector('.ghds-inline-chat-btn')) return true
+
+    // 查找内部的菜单容器
+    const menuContainer = actionBar.querySelector('[class*="menuActionsContainer"]')
+    if (!menuContainer) return false
+
+    const chatBtn = createInlineChatButton()
+    // 插入到菜单容器的第一个位置（Edit 按钮之前）
+    menuContainer.insertBefore(chatBtn, menuContainer.firstChild)
+    console.log('[DeepSeek] ✅ 已在 issue action bar 中插入 Chat 按钮')
+    return true
+  }
+
+  // 在 PR Files 页面的 review tools 中插入 Chat 按钮
+  function insertPRFilesButton() {
+    const reviewTools = document.querySelector('.pr-review-tools')
+    if (!reviewTools) return false
+
+    // 检查是否已插入
+    if (reviewTools.querySelector('.ghds-inline-chat-btn-files')) return true
+
+    // 查找 "Review changes" 按钮容器
+    const reviewChangesContainer = reviewTools.querySelector('.js-reviews-container')
+    if (!reviewChangesContainer) return false
+
+    // 使用 Files 页面专用按钮
+    const chatBtn = createFilesPageChatButton()
+
+    // 插入到 "Review changes" 按钮之后
+    reviewChangesContainer.parentNode.insertBefore(chatBtn, reviewChangesContainer.nextSibling)
+    console.log('[DeepSeek] ✅ 已在 PR Files review tools 中插入 Chat 按钮')
+    return true
+  }
+
+  // 在 GitHub 首页的全局导航栏中插入 Codeagent 按钮
+  function insertHomePageButton() {
+    const globalBar = document.querySelector('.AppHeader-globalBar-end')
+    if (!globalBar) return false
+
+    // 检查是否已插入
+    if (globalBar.querySelector('.ghds-homepage-btn')) return true
+
+    const chatBtn = document.createElement('a')
+    chatBtn.className = 'ghds-homepage-btn'
+    chatBtn.href = chrome.runtime.getURL('chat.html')
+    chatBtn.target = '_blank'
+    chatBtn.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M1.75 1h12.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 14.25 14H8.061l-2.574 2.573A1.457 1.457 0 0 1 3 15.543V14H1.75A1.75 1.75 0 0 1 0 12.25v-9.5C0 1.784.784 1 1.75 1ZM1.5 2.75v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25Z"></path>
+      </svg>
+      <span>Codeagent</span>
+    `
+
+    // 插入到导航栏最前面
+    globalBar.insertBefore(chatBtn, globalBar.firstChild)
+    console.log('[DeepSeek] ✅ 已在首页导航栏中插入 Codeagent 按钮')
+    return true
+  }
+
 
   // 打开浏览器原生侧边栏（需 MV3 side_panel 支持）
   async function openBrowserSidePanel() {
@@ -133,61 +214,87 @@
   }
 
   // 挂载 UI（防重复）
-  function mountUIIfIssue() {
-    if (!isIssuePage()) {
+  function mountUI() {
+    if (uiMounted) return // 已挂载
+
+    const isHome = isGitHubHomePage()
+    const isIssue = isIssuePage()
+
+    if (!isHome && !isIssue) {
       if (uiMounted) {
-        console.log('[DeepSeek] 离开 issue 页面，卸载 UI')
+        console.log('[DeepSeek] 离开目标页面，卸载 UI')
         unmountUI()
       }
       return
     }
-    if (uiMounted) return // 已挂载
-    console.log('[DeepSeek] 识别到 issue 页面，挂载 UI')
-    floatingBtn = createFloatingButton()
-    uiMounted = true
+
+    console.log('[DeepSeek] 识别到目标页面，挂载 UI')
+
+    let inserted = false
+
+    // GitHub 首页：插入导航栏按钮
+    if (isHome) {
+      inserted = insertHomePageButton() || inserted
+    }
+
+    // Issue/PR Files 页面：插入内联按钮
+    if (isIssue) {
+      inserted = insertIssueActionButton() || inserted
+      inserted = insertPRFilesButton() || inserted
+    }
+
+    if (inserted) {
+      uiMounted = true
+      console.log('[DeepSeek] ✅ UI 挂载完成')
+    } else {
+      console.log('[DeepSeek] ⚠️ 未找到插入位置')
+    }
   }
 
-  // 卸载 UI（在离开 issue 页面时）
+  // 卸载 UI（在离开 issue/PR Files 页面时）
   function unmountUI() {
     if (!uiMounted) return
-    floatingBtn?.remove()
-    floatingBtn = null
+
+    // 移除所有内联按钮（包括两种样式）
+    document.querySelectorAll('.ghds-inline-chat-btn').forEach(btn => btn.remove())
+    document.querySelectorAll('.ghds-inline-chat-btn-files').forEach(btn => btn.remove())
+
     uiMounted = false
   }
 
   // 适配 GitHub 的动态导航
   function setupNavigationHooks() {
     // Turbo/PJAX 事件
-    document.addEventListener('turbo:load', mountUIIfIssue)
-    document.addEventListener('pjax:end', mountUIIfIssue)
+    document.addEventListener('turbo:load', mountUI)
+    document.addEventListener('pjax:end', mountUI)
     // History API hook
     const origPushState = history.pushState
     const origReplaceState = history.replaceState
     history.pushState = function (...args) {
       const ret = origPushState.apply(this, args)
-      setTimeout(mountUIIfIssue, 0)
+      setTimeout(mountUI, 0)
       return ret
     }
     history.replaceState = function (...args) {
       const ret = origReplaceState.apply(this, args)
-      setTimeout(mountUIIfIssue, 0)
+      setTimeout(mountUI, 0)
       return ret
     }
-    window.addEventListener('popstate', () => setTimeout(mountUIIfIssue, 0))
+    window.addEventListener('popstate', () => setTimeout(mountUI, 0))
 
     // 兜底：轮询 URL 变化（避免遗漏）
     let lastPath = location.pathname
     setInterval(() => {
       if (location.pathname !== lastPath) {
         lastPath = location.pathname
-        mountUIIfIssue()
+        mountUI()
       }
     }, 1000)
   }
 
   // 初始化
   function init() {
-    mountUIIfIssue()
+    mountUI()
     setupNavigationHooks()
   }
 

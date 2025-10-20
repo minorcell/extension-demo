@@ -1,61 +1,65 @@
-/* GitHub 风格侧边栏面板样式 */
+/* GitHub 暗黑主题侧边栏面板样式 */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #24292f; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e6edf3;
+  background: #0d1117;
+}
 
 /* 面板容器 */
 .panel {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #ffffff;
+  background: #0d1117;
 }
 
-/* 顶部标题栏 */
-.ghds-header {
+/* 操作按钮栏 */
+.ghds-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  background: #ffffff;
-  border-bottom: 1px solid #d0d7de;
-  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04);
-}
-
-.ghds-header-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #24292f;
-  display: flex;
-  align-items: center;
+  justify-content: flex-start;
   gap: 8px;
+  padding: 12px 16px;
+  background: #161b22;
+  border-top: 1px solid #30363d;
+  border-bottom: 1px solid #30363d;
 }
 
-.ghds-header-title::before {
-  content: "🤖";
-  font-size: 20px;
-}
-
-/* 清除按钮 */
-.clear-btn {
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
   background: transparent;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 6px 10px;
+  border: 1px solid #30363d;
   border-radius: 6px;
-  opacity: 0.6;
+  color: #7d8590;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
-  color: #57606a;
 }
 
-.clear-btn:hover {
+.action-btn:hover {
+  background: #21262d;
+  border-color: #8b949e;
+  color: #e6edf3;
+}
+
+.action-btn:active {
+  background: #30363d;
+  transform: scale(0.98);
+}
+
+.action-btn svg {
+  opacity: 0.7;
+}
+
+.action-btn:hover svg {
   opacity: 1;
-  background: #f6f8fa;
-  color: #24292f;
-}
-
-.clear-btn:active {
-  background: #eaeef2;
 }
 
 /* 聊天区域 */
@@ -63,7 +67,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: #f6f8fa;
+  background: #0d1117;
 }
 
 .ghds-chat::-webkit-scrollbar {
@@ -75,12 +79,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
 }
 
 .ghds-chat::-webkit-scrollbar-thumb {
-  background: #d0d7de;
+  background: #30363d;
   border-radius: 4px;
 }
 
 .ghds-chat::-webkit-scrollbar-thumb:hover {
-  background: #afb8c1;
+  background: #484f58;
 }
 
 /* 消息容器 */
@@ -103,7 +107,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
 .ghds-message .role {
   font-size: 12px;
   font-weight: 600;
-  color: #57606a;
+  color: #7d8590;
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -112,47 +116,47 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
 /* 消息气泡 */
 .ghds-message .bubble {
   padding: 12px 16px;
-  border: 1px solid #d0d7de;
+  border: 1px solid #30363d;
   border-radius: 6px;
-  background: #ffffff;
-  color: #24292f;
+  background: #161b22;
+  color: #e6edf3;
   white-space: pre-wrap;
   word-wrap: break-word;
   font-size: 14px;
   line-height: 1.6;
-  box-shadow: 0 1px 2px rgba(27, 31, 35, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
 }
 
 /* 用户消息 */
 .ghds-message.user .bubble {
-  background: #ffffff;
-  border-color: #d0d7de;
+  background: #161b22;
+  border-color: #30363d;
 }
 
 /* AI 助手消息 */
 .ghds-message.assistant .bubble {
-  background: #ddf4ff;
-  border-color: #54aeff;
+  background: #1c2128;
+  border-color: #388bfd;
 }
 
 /* 流式输出状态 */
 .ghds-message .bubble.streaming {
   position: relative;
-  border-color: #54aeff;
-  box-shadow: 0 0 0 2px rgba(84, 174, 255, 0.1);
+  border-color: #388bfd;
+  box-shadow: 0 0 0 2px rgba(56, 139, 253, 0.15);
 }
 
 /* 错误消息 */
 .ghds-message .bubble.error {
-  background: #ffebe9;
-  border-color: #ff8182;
-  color: #d1242f;
+  background: #2d1519;
+  border-color: #da3633;
+  color: #ff7b72;
 }
 
 /* 光标动画 */
 .ghds-message .bubble .cursor {
-  color: #0969da;
+  color: #58a6ff;
   font-weight: bold;
   animation: blink 1s step-end infinite;
   margin-left: 2px;
@@ -166,10 +170,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
 
 /* 输入区域 */
 .ghds-input {
-  border-top: 1px solid #d0d7de;
+  border-top: 1px solid #30363d;
   padding: 16px;
-  background: #ffffff;
-  box-shadow: 0 -1px 0 rgba(27, 31, 35, 0.04);
+  background: #161b22;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.02);
 }
 
 .ghds-input form {
@@ -184,10 +188,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
   min-height: 40px;
   max-height: 160px;
   padding: 8px 12px;
-  border: 1px solid #d0d7de;
+  border: 1px solid #30363d;
   border-radius: 6px;
-  background: #f6f8fa;
-  color: #24292f;
+  background: #0d1117;
+  color: #e6edf3;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
@@ -196,41 +200,41 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", 
 
 .ghds-input textarea:focus {
   outline: none;
-  border-color: #0969da;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+  border-color: #1f6feb;
+  background: #0d1117;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.15);
 }
 
 .ghds-input textarea::placeholder {
-  color: #57606a;
+  color: #7d8590;
 }
 
 .ghds-input button {
   padding: 8px 16px;
-  background: linear-gradient(180deg, #2da44e 0%, #298e46 100%);
+  background: linear-gradient(180deg, #238636 0%, #2ea043 100%);
   color: #ffffff;
-  border: 1px solid rgba(27, 31, 36, 0.15);
+  border: 1px solid rgba(240, 246, 252, 0.1);
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   height: 40px;
 }
 
 .ghds-input button:hover {
-  background: linear-gradient(180deg, #2c974b 0%, #279f44 100%);
-  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, #2ea043 0%, #238636 100%);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .ghds-input button:active {
-  background: #298e46;
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.1);
+  background: #238636;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .ghds-input button:disabled {
-  background: #94d3a2;
+  background: #1a472a;
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5;
 }

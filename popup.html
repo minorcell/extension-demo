@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Codeagent 快捷菜单</title>
+    <link rel="stylesheet" href="styles/popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <div class="header">
+        <div class="title">
+          <span class="logo">💬</span>
+          <span>Codeagent 快捷菜单</span>
+        </div>
+      </div>
+
+      <div class="menu">
+        <button id="openSidePanelBtn" class="menu-item" title="打开浏览器侧边栏">
+          <span class="icon">🧭</span>
+          <div class="meta">
+            <div class="label">打开侧边栏</div>
+            <div class="desc">在当前标签页右侧打开聊天</div>
+          </div>
+        </button>
+
+        <button id="openChatBtn" class="menu-item" title="打开独立聊天页面">
+          <span class="icon">🗂️</span>
+          <div class="meta">
+            <div class="label">打开 Chat</div>
+            <div class="desc">在新标签页打开独立聊天页</div>
+          </div>
+        </button>
+
+        <button id="openOptionsBtn" class="menu-item" title="打开扩展设置">
+          <span class="icon">⚙️</span>
+          <div class="meta">
+            <div class="label">打开配置</div>
+            <div class="desc">设置 API Key、模型等参数</div>
+          </div>
+        </button>
+      </div>
+
+      <div class="footer">
+        <span class="hint">侧边栏需 Chrome 114+ 或 Edge 115+</span>
+      </div>
+    </div>
+
+    <script src="scripts/popup.js"></script>
+  </body>
+  </html>
+

@@ -30,7 +30,7 @@ async function callDeepSeekGenerateStream({ prompt, context = [], port }) {
     const messages = [
       {
         role: 'system',
-        content: `你是一位务实、资深的程序员，正在通过侧边栏与同事交流技术问题。
+        content: `你是一位务实、资深的大模型Agent，你叫Codeagent，正在通过侧边栏与同事交流技术问题。
 
 核心原则：
 1. 直接用纯文本回答，不要使用 Markdown 格式（不要用 **, ##, \`\`\`, 等符号）
@@ -40,8 +40,7 @@ async function callDeepSeekGenerateStream({ prompt, context = [], port }) {
 5. 专注于解决实际问题，少说废话，多给干货
 
 回答风格示例：
-- 不要说："您可以使用以下代码..."
-- 而是说："直接这样写就行："
+- 不要说："您可以使用以下代码..."，而是："直接这样写就行："
 - 不要用代码块，直接写代码
 - 用简洁、实用的语言，像在工位上给同事解释代码一样`
       }
@@ -157,7 +156,44 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     }
 
     // 获取 tabId（必须同步获取，不能用 await）
-    const tabId = sender?.tab?.id;
+    // 如果来自 popup，sender.tab 可能为空，需查询当前激活标签页
+    let tabId = sender?.tab?.id;
+    if (!tabId) {
+      try {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const activeTab = tabs && tabs[0];
+          if (!activeTab) {
+            sendResponse({ ok: false, error: '无法获取激活标签页' });
+            return;
+          }
+          tabId = activeTab.id;
+
+          chrome.sidePanel.setOptions({
+            tabId: tabId,
+            enabled: true,
+            path: 'panel.html'
+          }, () => {
+            if (chrome.runtime.lastError) {
+              console.error('[DeepSeek] 设置侧边栏选项失败：', chrome.runtime.lastError);
+              sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+              return;
+            }
+            chrome.sidePanel.open({ tabId: tabId }, () => {
+              if (chrome.runtime.lastError) {
+                console.error('[DeepSeek] 打开侧边栏失败：', chrome.runtime.lastError);
+                sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+              } else {
+                console.log('[DeepSeek] 侧边栏成功打开！（popup 请求）');
+                sendResponse({ ok: true });
+              }
+            });
+          });
+        });
+      } catch (e) {
+        sendResponse({ ok: false, error: e?.message || String(e) });
+      }
+      return true; // 异步响应
+    }
     if (!tabId) {
       sendResponse({ ok: false, error: '无法获取标签页 ID' });
       return false;
@@ -167,7 +203,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     chrome.sidePanel.setOptions({
       tabId: tabId,
       enabled: true,
-      path: 'src/panel.html'
+      path: 'panel.html'
     }, () => {
       if (chrome.runtime.lastError) {
         console.error('[DeepSeek] 设置侧边栏选项失败：', chrome.runtime.lastError);
@@ -191,25 +227,44 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
-// 监听扩展图标点击事件，打开侧边栏
-chrome.action.onClicked.addListener(async (tab) => {
+// 当 manifest 定义了 default_popup 时，点击图标应打开 popup，而不是侧边栏
+// 只有在未定义 popup 的情况下，才注册点击监听以打开侧边栏
+(() => {
+  const manifest = chrome.runtime.getManifest();
+  const hasPopup = !!(manifest && manifest.action && manifest.action.default_popup);
+  // 某些环境下如果之前设置过 openPanelOnActionClick = true，会导致点击扩展图标直接打开侧边栏
+  // 为避免与 popup 冲突，这里根据是否定义了 default_popup 主动设置行为
   try {
-    console.log('[DeepSeek] 扩展图标被点击，tab.id =', tab.id);
-
-    if (!chrome.sidePanel || !chrome.sidePanel.open) {
-      console.error('[DeepSeek] 浏览器不支持 sidePanel API');
-      return;
+    if (chrome.sidePanel && chrome.sidePanel.setPanelBehavior) {
+      chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: !hasPopup });
+      console.log('[DeepSeek] 已设置 sidePanel 行为：openPanelOnActionClick =', !hasPopup);
     }
-
-    await chrome.sidePanel.setOptions({
-      tabId: tab.id,
-      enabled: true,
-      path: 'src/panel.html'
-    });
-
-    await chrome.sidePanel.open({ tabId: tab.id });
-    console.log('[DeepSeek] 侧边栏已通过 action 图标打开');
   } catch (e) {
-    console.error('[DeepSeek] 打开侧边栏失败：', e);
+    console.warn('[DeepSeek] 设置 sidePanel 行为失败：', e);
   }
-});
+  if (!hasPopup) {
+    chrome.action.onClicked.addListener(async (tab) => {
+      try {
+        console.log('[DeepSeek] 扩展图标被点击，tab.id =', tab.id);
+
+        if (!chrome.sidePanel || !chrome.sidePanel.open) {
+          console.error('[DeepSeek] 浏览器不支持 sidePanel API');
+          return;
+        }
+
+        await chrome.sidePanel.setOptions({
+          tabId: tab.id,
+          enabled: true,
+          path: 'panel.html'
+        });
+
+        await chrome.sidePanel.open({ tabId: tab.id });
+        console.log('[DeepSeek] 侧边栏已通过 action 图标打开');
+      } catch (e) {
+        console.error('[DeepSeek] 打开侧边栏失败：', e);
+      }
+    });
+  } else {
+    console.log('[DeepSeek] 检测到 default_popup，未注册 action.onClicked，以避免与 popup 冲突');
+  }
+})();

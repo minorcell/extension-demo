@@ -1,42 +1,84 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DeepSeek 扩展设置</title>
-    <style>
-      body { font-family: -apple-system, system-ui, Segoe UI, Helvetica, Arial; padding: 16px; }
-      .form { max-width: 640px; }
-      .row { margin-bottom: 12px; }
-      label { display: block; font-weight: 600; margin-bottom: 6px; }
-      input { width: 100%; padding: 8px; border: 1px solid #d0d7de; border-radius: 6px; }
-      .actions { margin-top: 16px; }
-      button { padding: 8px 12px; background-color: #2da44e; color: #fff; border: 1px solid rgba(27,31,36,.15); border-radius: 6px; cursor: pointer; }
-      button:hover { background-color: #2c974b; }
-      .tips { color: #57606a; font-size: 13px; }
-    </style>
-  </head>
-  <body>
-    <h1>DeepSeek 扩展设置</h1>
-    <p class="tips">配置 DeepSeek 的 API Key、基础地址与模型名称。</p>
-    <div class="form">
-      <div class="row">
-        <label for="apiKey">API Key</label>
-        <input id="apiKey" type="password" placeholder="例如：sk-..." />
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codeagent Chat 扩展设置</title>
+  <link rel="stylesheet" href="styles/options.css" />
+</head>
+
+<body>
+  <div class="container">
+    <!-- 页面头部 -->
+    <div class="header">
+      <h1 class="header-title">扩展设置</h1>
+    </div>
+
+    <!-- API 配置卡片 -->
+    <div class="settings-card">
+      <h2 class="card-title">API 配置</h2>
+
+      <div class="form-group">
+        <label for="apiKey">
+          API Key
+          <span class="label-description">
+            你的 DeepSeek API 密钥，用于身份验证和计费
+          </span>
+        </label>
+        <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
       </div>
-      <div class="row">
-        <label for="baseUrl">Base URL</label>
-        <input id="baseUrl" type="text" placeholder="默认：https://api.deepseek.com" />
+
+      <div class="form-group">
+        <label for="baseUrl">
+          Base URL
+          <span class="label-description">
+            API 服务器地址，通常使用默认值即可
+          </span>
+        </label>
+        <input id="baseUrl" type="text" placeholder="https://api.deepseek.com" />
       </div>
-      <div class="row">
-        <label for="model">Model</label>
-        <input id="model" type="text" placeholder="例如：deepseek-chat" />
+
+      <div class="form-group">
+        <label for="model">
+          Model
+          <span class="label-description">
+            使用的模型名称，推荐使用 <code>deepseek-chat</code>
+          </span>
+        </label>
+        <input id="model" type="text" placeholder="deepseek-chat" />
       </div>
+
       <div class="actions">
-        <button id="saveBtn">保存</button>
+        <button id="saveBtn">保存设置</button>
+        <button id="testBtn" class="btn-secondary">测试连接</button>
       </div>
     </div>
 
-    <script src="scripts/options.js"></script>
-  </body>
-  </html>
+    <!-- 使用提示卡片 -->
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <div class="alert-content">
+        <strong>使用提示：</strong>
+        <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+          <li>在 GitHub issue 或 PR Files 页面点击 "Codeagent Chat" 按钮打开侧边栏</li>
+          <li>你也可以点击浏览器工具栏中的扩展图标快速打开</li>
+          <li>所有对话历史会保存在本地，支持上下文对话</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>
+        GitHub DeepSeek Sidebar Chat ·
+        <a href="https://github.com/anthropics/claude-code" target="_blank">查看源码</a> ·
+        <a href="https://platform.deepseek.com/" target="_blank">DeepSeek 官网</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="scripts/options.js"></script>
+</body>
+
+</html>

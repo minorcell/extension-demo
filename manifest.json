@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "GitHub DeepSeek Sidebar Chat",
-  "version": "0.2.0",
-  "description": "在 GitHub issue 页面右下角提供浮点按钮，打开浏览器侧边栏聊天，并通过 DeepSeek 大模型进行回复。",
+  "name": "Codeagent Chat",
+  "version": "0.3.0",
+  "description": "CodeAgent is an AI-powered intelligent programming assistant that integrates directly into your GitHub workflow. Simply mention the bot account in Issues or PRs, or use simple commands to get code analysis, automated programming, and code review services.",
   "permissions": [
     "storage",
     "tabs",
@@ -12,7 +12,8 @@
     "https://api.deepseek.com/*"
   ],
   "action": {
-    "default_title": "DeepSeek GitHub Chat"
+    "default_title": "Codeagent 快捷菜单",
+    "default_popup": "popup.html"
   },
   "side_panel": {
     "default_path": "panel.html"
@@ -35,5 +36,15 @@
     "service_worker": "scripts/background.js",
     "type": "module"
   },
-  "options_page": "options.html"
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "chat.html"
+      ],
+      "matches": [
+        "https://github.com/*"
+      ]
+    }
+  ]
 }
